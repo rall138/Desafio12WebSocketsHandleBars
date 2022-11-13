@@ -2,7 +2,7 @@
     Ingrese producto
 </div>
 
-<form action="/productos" method="post" class="padding-10">
+<form onsubmit="return agregarProducto(this)" class="padding-10">
     <div class="mb-3">
         <label for="nombre" class="form-label">Nombre</label>
         <input type="text" id="nombre" class="form-control" name="nombre"/><br>
@@ -23,3 +23,4 @@
 </form>
 
 <div id="productos-placeholder"></div>
+<div id="mensajes-placeholder"></div>

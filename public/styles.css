@@ -8,3 +8,8 @@
     max-height: 40px;
     max-width: 40px;
 }
+
+.mail-message{
+    font-weight: 800;
+    color: blue;
+}

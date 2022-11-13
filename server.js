@@ -3,6 +3,7 @@ const socketIo = require('socket.io')
 const http = require('http')
 const handlebars = require('express-handlebars')
 const productosController = require('./controller/productosController.js')
+const mensajesController = require('./controller/mensajesController.js')
 
 const app = express()
 const PORT = 8080
@@ -26,8 +27,11 @@ app.set('view engine', 'hbs') // Le dice cual es el motor de procesamiento de es
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-const controller = new productosController()
-app.use('/', controller.getRouter())
+const prdController = new productosController()
+const msjController = new mensajesController()
+
+app.use(msjController.getRouter())
+app.use('/', prdController.getRouter())
 
 httpServer.listen(PORT, ()=>{
     console.log(`Servidor escuchando en el puerto ${PORT}`)
@@ -36,12 +40,25 @@ httpServer.listen(PORT, ()=>{
 io.on('connection', socket => {
     console.log('Nuevo cliente conectado')
     
-    socket.emit('lista-productos', controller.productos)
-    socket.on('nuevo-producto', data=>{
+    socket.emit('lista-productos', prdController.productos)
+    socket.emit('lista-mensajes', msjController.mensajes)
+
+    socket.on('nuevo-producto', data => {
         try{
-            controller.addProduct(data)
+            prdController.addProduct(data)
+            socket.emit('lista-productos', prdController.productos)
         }catch(error){
-            socket.emit('lista-productos', null)
+            console.log(error)
         }
     })
+
+    socket.on('nuevo-mensaje', data => {
+        try{
+            msjController.addmensaje(data)
+            socket.emit('lista-mensajes', msjController.mensajes)
+        }catch(error){
+            console.log(error)
+        }
+    })
+
 })

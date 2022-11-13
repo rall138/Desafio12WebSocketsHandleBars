@@ -26,7 +26,6 @@ class productosController{
             const newProducto = req.body
             try{
                 this.addProduct(newProducto)
-                res.render('producto')
             }catch(error){
                 res.render('errorPage', {error: error})
             }
