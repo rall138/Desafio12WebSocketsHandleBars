@@ -1,23 +1,67 @@
 const socket = io.connect()
 
 function agregarProducto(e){
-    const producto = {
-        nombre: document.getElementById('nombre').value,
-        precio: document.getElementById('precio').value,
-        foto: document.getElementById('foto').value
+    limpiarMensajeError()
+    const nombre = document.getElementById('nombre').value
+    const precio = document.getElementById('precio').value
+    if(nombre !== '' && precio > 0){
+        if(!isNaN(precio)){
+            const producto = {
+                nombre: nombre,
+                precio: precio,
+                foto: document.getElementById('foto').value
+            }
+            socket.emit('nuevo-producto', producto)
+        }else{
+            generarMensajeError('El precio debe ser un valor numérico')
+        }
+    }else{
+        generarMensajeError('El nombre del producto y el precio deben ser ingresados.')
     }
-    socket.emit('nuevo-producto', producto)
+
     return false
 }
 
 function enviarMensaje(e){
-    const mensaje = {
-        mensaje: document.getElementById('mensaje').value,
-        correo: document.getElementById('correo').value,
-        fechaHora: (new Date()).toLocaleString()
+    limpiarMensajeError()
+    const email = document.getElementById('correo').value
+    const msg = document.getElementById('mensaje').value
+    if(validarCorreo(email)){
+        if(msg !== ''){
+            const message = {
+                mensaje: msg,
+                correo: email,
+                fechaHora: (new Date()).toLocaleString()
+            }
+            socket.emit('nuevo-mensaje', message)
+        }else{
+            generarMensajeError('El campo mensaje no puede ser vacio')
+        }
     }
-    socket.emit('nuevo-mensaje', mensaje)
     return false
+}
+
+function validarCorreo(correo){
+
+    if (!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(correo))){
+        generarMensajeError('El correo no es válido')
+        return false
+    }
+    limpiarMensajeError()
+    return true
+}
+
+function generarMensajeError(mensaje){
+    const element = document.getElementById('alert-message')
+    element.className = element.className.replace('invisible', '')
+    element.innerHTML = mensaje
+}
+
+function limpiarMensajeError(){
+    const element = document.getElementById('alert-message')
+    element.className = element.className.replace('invisible', '')
+    element.className = element.className + ' invisible'
+    element.innerHTML = ''
 }
 
 socket.on('lista-mensajes', data => {

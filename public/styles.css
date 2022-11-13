@@ -13,3 +13,16 @@
     font-weight: 800;
     color: blue;
 }
+
+.date-message{
+    color: brown;
+}
+
+.text-message{
+    color: green;
+    font-style: italic;
+}
+
+.invisible{
+    display: none;
+}
