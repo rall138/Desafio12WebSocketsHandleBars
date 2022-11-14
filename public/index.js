@@ -68,10 +68,10 @@ socket.on('lista-mensajes', data => {
 
     // en vez de hacer un fetch por la coleccion, hacer un fecth por la pagina procesada de productos mediante el render del lado servidor.
     fetch('http://localhost:8080/mensajes')
-    .then(result =>  result.json())
+    .then(result => result.json())
     .then(fetchData => {
         const template = Handlebars.compile(fetchData.template)
-        const html = template({mensajes: data})
+        const html = template({mensajes: fetchData.data})
         document.getElementById('mensajes-placeholder').innerHTML = html
     })
 

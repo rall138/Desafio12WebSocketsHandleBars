@@ -1,5 +1,6 @@
 const express = require('express')
 const fs = require('fs')
+const { resolve } = require('path')
 
 class mensajesController{
 
@@ -10,7 +11,8 @@ class mensajesController{
 
         this.mensajesRouter.get('/mensajes', (req, res) =>{
             const templateFile = fs.readFileSync(__dirname+'/../public/centroMensajes.hbs', 'utf8')
-            res.send({template: templateFile, mensajes: this.mensajes})
+            const collection = fs.readFileSync(__dirname+'/../files/messages.txt', 'utf-8')
+            res.send({template: templateFile, data: JSON.parse(collection)})
         })
 
         this.mensajesRouter.post('/mensajes', (req, res) =>{
@@ -23,10 +25,16 @@ class mensajesController{
         })
     }
 
-    addmensaje(newMensaje){
+    async addmensaje(newMensaje){
         if(!this.isNullOrUndefined(newMensaje)){
-            newMensaje.precio = parseFloat(newMensaje.precio)
-            this.mensajes.push(newMensaje)
+            const mensajes = await fs.promises.readFile(__dirname+'/../files/messages.txt', 'utf-8')
+            const mensajesObj = JSON.parse(mensajes)
+            mensajesObj.push(newMensaje)
+            fs.promises.writeFile(__dirname+'/../files/messages.txt', JSON.stringify(mensajesObj, null, 2))
+            .then(() => {
+                console.log('Mensajes guardados correctamente')
+            })
+
         }else{
             throw new Error('Mensaje nulo')
         }

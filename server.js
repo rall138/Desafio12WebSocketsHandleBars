@@ -55,7 +55,7 @@ io.on('connection', socket => {
     socket.on('nuevo-mensaje', data => {
         try{
             msjController.addmensaje(data)
-            socket.emit('lista-mensajes', msjController.mensajes)
+            socket.emit('lista-mensajes')
         }catch(error){
             console.log(error)
         }
